@@ -51,7 +51,7 @@ impl Model {
                 position: vec2(0.0 + x, 2.0 + y).map(r32),
                 velocity: Vec2::ZERO,
                 radius: r32(0.25),
-                length: r32(1.0),
+                length: config.balloon_length,
                 drag: config.balloon_drag,
                 color: Rgba::RED,
                 attached_to_player: true,

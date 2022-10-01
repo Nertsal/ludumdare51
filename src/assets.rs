@@ -16,6 +16,7 @@ pub struct Config {
     pub player_mass: R32,
     pub balloon_drag: R32,
     pub player_drag: R32,
+    pub balloon_length: Coord,
 }
 
 #[derive(geng::Assets)]
