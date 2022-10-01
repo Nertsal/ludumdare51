@@ -14,7 +14,7 @@ impl Game {
         Self {
             geng: geng.clone(),
             render: Render::new(geng, assets),
-            model: Model::new(),
+            model: Model::new(assets.config.clone()),
         }
     }
 }
