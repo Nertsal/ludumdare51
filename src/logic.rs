@@ -23,6 +23,7 @@ impl Logic<'_> {
         self.player_balloon();
         self.collisions();
         self.movement();
+        self.generation();
     }
 
     fn apply_gravity(&mut self) {
@@ -45,6 +46,9 @@ impl Logic<'_> {
                 let delta = balloon.position - self.model.player.position;
                 balloon.position = self.model.player.position + delta.clamp_len(..=balloon.length);
             }
+        }
+        for obstacle in &mut self.model.obstacles {
+            obstacle.position += obstacle.velocity * self.delta_time;
         }
     }
 
@@ -91,6 +95,27 @@ impl Logic<'_> {
             );
             player.velocity = p_vel;
             balloon.velocity = b_vel;
+        }
+    }
+
+    fn generation(&mut self) {
+        let mut rng = global_rng();
+        let config = &self.model.config.obstacles;
+        let gen_height = self.model.player.position.y + config.max_gen_height;
+        while self.model.last_gen_height <= gen_height {
+            let height = self.model.last_gen_height + rng.gen_range(config.min_dh..=config.max_dh);
+            self.model.last_gen_height = height;
+            let side = r32((rng.gen_range(0..=1) * 2 - 1) as f32);
+            let radius = r32(0.5);
+            let speed = rng.gen_range(config.min_speed..=config.max_speed);
+            let x = (config.spawn_area_width + radius) * side;
+            let obstacle = Obstacle {
+                id: self.model.id_gen.gen(),
+                position: vec2(x, height),
+                velocity: vec2(-side * speed, Coord::ZERO),
+                radius,
+            };
+            self.model.obstacles.insert(obstacle);
         }
     }
 }

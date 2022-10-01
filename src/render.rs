@@ -27,7 +27,7 @@ impl Render {
     }
 
     pub fn update(&mut self, model: &Model, delta_time: f32) {
-        self.camera_target.y = model.player.position.y.as_f32();
+        self.camera_target.y = model.player.position.y.as_f32() + 3.0;
         self.camera.center +=
             (self.camera_target - self.camera.center) / CAMERA_INTERPOLATION * delta_time;
     }
@@ -39,6 +39,15 @@ impl Render {
                 .extend_symmetric(vec2(100.0, 0.0))
                 .extend_down(100.0);
             let quad = draw_2d::Quad::new(aabb, Rgba::from_rgb(0.3, 0.6, 0.0));
+            geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
+        }
+
+        // Obstacles
+        for obstacle in &model.obstacles {
+            let aabb = AABB::point(obstacle.position)
+                .extend_uniform(obstacle.radius)
+                .map(|x| x.as_f32());
+            let quad = draw_2d::Quad::new(aabb, Rgba::GREEN);
             geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
         }
 

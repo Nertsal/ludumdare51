@@ -5,5 +5,14 @@
   "player_mass": 1.0,
   "balloon_drag": 0.1,
   "player_drag": 0.1,
-  "balloon_length": 2.0
+  "balloon_length": 2.0,
+  "obstacles": {
+    "spawn_area_width": 10,
+    "min_speed": 2,
+    "max_speed": 5,
+    "min_height": 3,
+    "max_gen_height": 5,
+    "min_dh": 2,
+    "max_dh": 4
+  }
 }

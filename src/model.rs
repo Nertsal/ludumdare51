@@ -10,8 +10,10 @@ pub type Coord = R32;
 pub struct Model {
     pub config: Config,
     pub id_gen: IdGenerator,
+    pub last_gen_height: Coord,
     pub player: Player,
     pub balloons: Collection<Balloon>,
+    pub obstacles: Collection<Obstacle>,
 }
 
 pub struct Player {
@@ -34,6 +36,14 @@ pub struct Balloon {
     pub drag: R32,
     pub color: Rgba<f32>,
     pub attached_to_player: bool,
+}
+
+#[derive(HasId)]
+pub struct Obstacle {
+    pub id: Id,
+    pub position: Vec2<Coord>,
+    pub velocity: Vec2<Coord>,
+    pub radius: Coord,
 }
 
 impl Model {
@@ -61,6 +71,7 @@ impl Model {
 
         Self {
             id_gen,
+            last_gen_height: config.obstacles.min_height - config.obstacles.min_dh,
             player: Player {
                 mass: config.player_mass,
                 position: Vec2::ZERO,
@@ -70,6 +81,7 @@ impl Model {
                 balloons: balloons.ids().copied().collect(),
             },
             balloons,
+            obstacles: default(),
             config,
         }
     }
