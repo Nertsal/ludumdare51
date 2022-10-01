@@ -36,11 +36,11 @@ impl Logic<'_> {
     fn movement(&mut self) {
         {
             let player = &mut self.model.player;
-            player.velocity -= player.velocity.sqr() * player.drag * self.delta_time;
+            player.velocity -= player.velocity * player.drag * self.delta_time;
             player.position += player.velocity * self.delta_time;
         }
         for balloon in &mut self.model.balloons {
-            balloon.velocity -= balloon.velocity.sqr() * balloon.drag * self.delta_time;
+            balloon.velocity -= balloon.velocity * balloon.drag * self.delta_time;
             balloon.position += balloon.velocity * self.delta_time;
             if balloon.attached_to_player {
                 let delta = balloon.position - self.model.player.position;
@@ -138,12 +138,12 @@ fn collide(
         let delta = direction * penetration;
         *position_a -= delta;
         *position_b += delta;
+        let delta = *position_b - *position_a;
+        let (a_vel, b_vel) =
+            collide_impulses(mass_a, *velocity_a, mass_b, *velocity_b, delta, r32(0.0));
+        *velocity_a = a_vel;
+        *velocity_b = b_vel;
     }
-    let delta = *position_b - *position_a;
-    let (a_vel, b_vel) =
-        collide_impulses(mass_a, *velocity_a, mass_b, *velocity_b, delta, r32(0.0));
-    *velocity_a = a_vel;
-    *velocity_b = b_vel;
 }
 
 fn collide_impulses(

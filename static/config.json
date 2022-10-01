@@ -1,5 +1,6 @@
 {
   "gravity": [0.0, -10.0],
+  "player_acceleration": 5.0,
   "initial_balloons": 5,
   "balloon_mass": 0.25,
   "player_mass": 1.0,
