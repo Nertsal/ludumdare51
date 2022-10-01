@@ -30,5 +30,6 @@ impl geng::State for Game {
     fn update(&mut self, delta_time: f64) {
         let delta_time = Time::new(delta_time as _);
         self.model.update(delta_time);
+        self.render.update(&self.model, delta_time.as_f32());
     }
 }

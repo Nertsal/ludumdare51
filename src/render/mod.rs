@@ -7,7 +7,10 @@ pub struct Render {
     geng: Geng,
     assets: Rc<Assets>,
     camera: Camera2d,
+    camera_target: Vec2<f32>,
 }
+
+const CAMERA_INTERPOLATION: f32 = 0.5;
 
 impl Render {
     pub fn new(geng: &Geng, assets: &Rc<Assets>) -> Self {
@@ -19,7 +22,14 @@ impl Render {
                 fov: 10.0,
                 rotation: 0.0,
             },
+            camera_target: Vec2::ZERO,
         }
+    }
+
+    pub fn update(&mut self, model: &Model, delta_time: f32) {
+        self.camera_target.y = model.player.position.y.as_f32();
+        self.camera.center +=
+            (self.camera_target - self.camera.center) / CAMERA_INTERPOLATION * delta_time;
     }
 
     pub fn draw(&mut self, model: &Model, framebuffer: &mut ugli::Framebuffer) {
