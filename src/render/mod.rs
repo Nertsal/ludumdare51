@@ -38,7 +38,7 @@ impl Render {
             let aabb = AABB::point(player.position)
                 .extend_uniform(player.radius)
                 .map(|x| x.as_f32());
-            let quad = draw_2d::Quad::new(aabb, Rgba::WHITE);
+            let quad = draw_2d::TexturedQuad::new(aabb, &self.assets.sprites.player);
             geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
         }
 

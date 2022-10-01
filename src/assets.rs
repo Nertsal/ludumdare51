@@ -3,6 +3,7 @@ use crate::model::*;
 
 #[derive(geng::Assets)]
 pub struct Assets {
+    pub sprites: Sprites,
     pub config: Config,
 }
 
@@ -15,4 +16,9 @@ pub struct Config {
     pub player_mass: R32,
     pub balloon_drag: R32,
     pub player_drag: R32,
+}
+
+#[derive(geng::Assets)]
+pub struct Sprites {
+    pub player: ugli::Texture,
 }

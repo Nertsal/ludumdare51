@@ -21,7 +21,7 @@ impl Game {
 
 impl geng::State for Game {
     fn draw(&mut self, framebuffer: &mut ugli::Framebuffer) {
-        ugli::clear(framebuffer, Some(Rgba::BLACK), None, None);
+        ugli::clear(framebuffer, Some(Rgba::from_rgb(0.0, 0.7, 0.7)), None, None);
         self.render.draw(&self.model, framebuffer);
     }
 
