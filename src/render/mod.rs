@@ -32,6 +32,24 @@ impl Render {
             geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
         }
 
+        // Balloons
+        for balloon in &model.balloons {
+            let aabb = AABB::point(balloon.position)
+                .extend_uniform(balloon.radius * r32(1.5))
+                .map(|x| x.as_f32());
+
+            let segment = Segment::new(
+                vec2(aabb.center().x, aabb.y_min + balloon.radius.as_f32() * 0.1),
+                model.player.position.map(|x| x.as_f32()),
+            );
+            let segment = draw_2d::Segment::new(segment, 0.02, Rgba::BLACK);
+            geng::Draw2d::draw_2d(&segment, &self.geng, framebuffer, &self.camera);
+
+            let quad =
+                draw_2d::TexturedQuad::colored(aabb, &self.assets.sprites.balloon, balloon.color);
+            geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
+        }
+
         {
             // Player
             let player = &model.player;
@@ -39,15 +57,6 @@ impl Render {
                 .extend_uniform(player.radius)
                 .map(|x| x.as_f32());
             let quad = draw_2d::TexturedQuad::new(aabb, &self.assets.sprites.player);
-            geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
-        }
-
-        // Balloons
-        for balloon in &model.balloons {
-            let aabb = AABB::point(balloon.position)
-                .extend_uniform(balloon.radius)
-                .map(|x| x.as_f32());
-            let quad = draw_2d::Quad::new(aabb, balloon.color);
             geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
         }
     }

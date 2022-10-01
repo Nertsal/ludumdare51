@@ -22,4 +22,5 @@ pub struct Config {
 #[derive(geng::Assets)]
 pub struct Sprites {
     pub player: ugli::Texture,
+    pub balloon: ugli::Texture,
 }
