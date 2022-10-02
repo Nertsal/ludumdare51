@@ -19,7 +19,7 @@ pub struct Animation {
 pub struct Config {
     pub gravity: Vec2<Coord>,
     pub balloon_pop_time: Time,
-    pub player_acceleration: Coord,
+    pub player_acceleration: Vec2<Coord>,
     pub initial_balloons: usize,
     pub balloon_mass: R32,
     pub player_mass: R32,

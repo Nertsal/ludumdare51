@@ -155,18 +155,16 @@ impl Render {
             let player = &model.player;
             let aabb = AABB::ZERO.extend_uniform(player.radius).map(|x| x.as_f32());
             let mut transform = Mat3::translate(player.position.map(|x| x.as_f32()));
-            let texture = if player.position.y > Coord::ZERO {
-                if player.balloons.is_empty() || !player.alive {
-                    transform = transform * Mat3::rotate(-f32::PI / 4.0);
-                    &self.assets.sprites.player[0]
-                } else {
-                    self.assets.sprites.player.get_frame(player.animation_time)
-                }
-            } else {
+            let texture = if player.balloons.is_empty() && player.position.y <= Coord::ZERO {
                 self.assets
                     .sprites
                     .player_dead
                     .get_frame(player.animation_time)
+            } else if player.balloons.is_empty() {
+                transform *= Mat3::rotate(-f32::PI / 4.0);
+                &self.assets.sprites.player[0]
+            } else {
+                self.assets.sprites.player.get_frame(player.animation_time)
             };
             let quad = draw_2d::TexturedQuad::new(aabb, texture).transform(transform);
             geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
