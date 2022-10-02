@@ -100,7 +100,7 @@ impl Logic<'_> {
 
         update(&mut self.model.player.animation_time, r32(1.0));
         for obstacle in &mut self.model.obstacles {
-            update(&mut obstacle.animation_time, r32(5.0));
+            update(&mut obstacle.animation_time, obstacle.animation_speed);
         }
     }
 
@@ -239,15 +239,16 @@ impl Logic<'_> {
                 let radius = r32(0.3);
                 let speed = rng.gen_range(config.min_speed..=config.max_speed);
                 let x = (config.spawn_area_width + radius) * side;
-                let obstacle_type = *vec![
-                    ObstacleType::Plane,
-                    ObstacleType::Helicopter1,
-                    ObstacleType::Helicopter2,
+                let (obstacle_type, animation_speed) = *vec![
+                    (ObstacleType::Plane, r32(1.0)),
+                    (ObstacleType::Helicopter1, r32(5.0)),
+                    (ObstacleType::Helicopter2, r32(5.0)),
                 ]
                 .choose(&mut rng)
                 .expect("Failed to select the cloud type");
                 let obstacle = Obstacle {
                     id: self.model.id_gen.gen(),
+                    animation_speed,
                     animation_time: Time::ZERO,
                     obstacle_type,
                     position: vec2(x, height),

@@ -58,8 +58,8 @@ pub struct ObstacleConfig {
 pub struct Sprites {
     pub player: Animation,
     pub balloon: ugli::Texture,
-    pub airplane: ugli::Texture,
-    pub helicopter: ugli::Texture,
+    pub airplane: Animation,
+    pub helicopter: Animation,
     pub helicopter2: Animation,
     #[asset(path = "clouds/*.png", range = "0..3")]
     pub clouds: Vec<ugli::Texture>,

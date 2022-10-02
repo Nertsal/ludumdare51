@@ -53,6 +53,7 @@ pub struct Balloon {
 #[derive(HasId)]
 pub struct Obstacle {
     pub id: Id,
+    pub animation_speed: R32,
     pub animation_time: Time,
     pub obstacle_type: ObstacleType,
     pub position: Vec2<Coord>,

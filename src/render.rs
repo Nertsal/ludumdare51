@@ -76,8 +76,16 @@ impl Render {
                 .map(|x| x.as_f32());
             let mut mirror = obstacle.velocity.x < Coord::ZERO;
             let texture = match obstacle.obstacle_type {
-                ObstacleType::Plane => &self.assets.sprites.airplane,
-                ObstacleType::Helicopter1 => &self.assets.sprites.helicopter,
+                ObstacleType::Plane => self
+                    .assets
+                    .sprites
+                    .airplane
+                    .get_frame(obstacle.animation_time),
+                ObstacleType::Helicopter1 => self
+                    .assets
+                    .sprites
+                    .helicopter
+                    .get_frame(obstacle.animation_time),
                 ObstacleType::Helicopter2 => {
                     mirror = !mirror;
                     self.assets
@@ -154,6 +162,14 @@ impl Render {
             if !model.player.alive {
                 // Death message
                 let text = "You got hit :(";
+                let text = draw_2d::Text::unit(font, text, TEXT_COLOR)
+                    .scale_uniform(40.0)
+                    .align_bounding_box(vec2(0.5, 0.5))
+                    .translate(screen(vec2(0.5, 0.5), vec2(0.0, 250.0)));
+                geng::Draw2d::draw_2d(&text, &self.geng, framebuffer, &geng::PixelPerfectCamera);
+            } else {
+                // Out of balloons message
+                let text = "All your balloons popped :(";
                 let text = draw_2d::Text::unit(font, text, TEXT_COLOR)
                     .scale_uniform(40.0)
                     .align_bounding_box(vec2(0.5, 0.5))
