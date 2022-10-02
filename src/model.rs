@@ -10,7 +10,7 @@ pub type Coord = R32;
 pub struct Model {
     pub config: Config,
     pub id_gen: IdGenerator,
-    pub last_gen_height: Coord,
+    pub next_obstacle: Time,
     pub next_balloon: Time,
     pub next_pop: Time,
     pub player: Player,
@@ -84,7 +84,7 @@ impl Model {
 
         Self {
             id_gen,
-            last_gen_height: config.obstacles.min_height - config.obstacles.min_dh,
+            next_obstacle: Time::ZERO,
             next_balloon: Time::ZERO,
             next_pop: config.balloon_pop_time,
             player: Player {
@@ -92,7 +92,7 @@ impl Model {
                 mass: config.player_mass,
                 position: Vec2::ZERO,
                 velocity: Vec2::ZERO,
-                radius: r32(0.5),
+                radius: r32(0.3),
                 drag: config.player_drag,
                 balloons: balloons.ids().copied().collect(),
             },

@@ -41,9 +41,10 @@ pub struct ObstacleConfig {
     pub min_speed: Coord,
     pub max_speed: Coord,
     pub min_height: Coord,
-    pub max_gen_height: Coord,
-    pub min_dh: Coord,
-    pub max_dh: Coord,
+    pub above_player: Coord,
+    pub below_player: Coord,
+    pub min_delay: Time,
+    pub max_delay: Time,
 }
 
 #[derive(geng::Assets)]

@@ -197,29 +197,34 @@ impl Logic<'_> {
     fn generation(&mut self) {
         let mut rng = global_rng();
         let config = &self.model.config.obstacles;
-        let gen_height = self.model.player.position.y + config.max_gen_height;
-        while self.model.last_gen_height <= gen_height {
-            let height = self.model.last_gen_height + rng.gen_range(config.min_dh..=config.max_dh);
-            self.model.last_gen_height = height;
-            let side = r32((rng.gen_range(0..=1) * 2 - 1) as f32);
-            let radius = r32(0.3);
-            let speed = rng.gen_range(config.min_speed..=config.max_speed);
-            let x = (config.spawn_area_width + radius) * side;
-            let obstacle_type = *vec![
-                ObstacleType::Plane,
-                ObstacleType::Helicopter1,
-                ObstacleType::Helicopter2,
-            ]
-            .choose(&mut rng)
-            .expect("Failed to select the obstacle type");
-            let obstacle = Obstacle {
-                id: self.model.id_gen.gen(),
-                obstacle_type,
-                position: vec2(x, height),
-                velocity: vec2(-side * speed, Coord::ZERO),
-                radius,
-            };
-            self.model.obstacles.insert(obstacle);
+        self.model.next_obstacle -= self.delta_time;
+        if self.model.next_obstacle < Time::ZERO {
+            let height = self.model.player.position.y
+                + rng.gen_range(-config.below_player..=config.above_player);
+            if height > config.min_height {
+                let side = r32((rng.gen_range(0..=1) * 2 - 1) as f32);
+                let radius = r32(0.3);
+                let speed = rng.gen_range(config.min_speed..=config.max_speed);
+                let x = (config.spawn_area_width + radius) * side;
+                let obstacle_type = *vec![
+                    ObstacleType::Plane,
+                    ObstacleType::Helicopter1,
+                    ObstacleType::Helicopter2,
+                ]
+                .choose(&mut rng)
+                .expect("Failed to select the obstacle type");
+                let obstacle = Obstacle {
+                    id: self.model.id_gen.gen(),
+                    obstacle_type,
+                    position: vec2(x, height),
+                    velocity: vec2(-side * speed, Coord::ZERO),
+                    radius,
+                };
+                self.model.obstacles.insert(obstacle);
+            }
+
+            let delay = rng.gen_range(config.min_delay..=config.max_delay);
+            self.model.next_obstacle += delay;
         }
 
         self.model.next_balloon -= self.delta_time;
