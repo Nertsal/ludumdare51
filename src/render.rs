@@ -8,6 +8,7 @@ pub struct Render {
     assets: Rc<Assets>,
     camera: Camera2d,
     camera_target: Vec2<f32>,
+    backgrounds: Vec<usize>,
 }
 
 const CAMERA_INTERPOLATION: f32 = 0.5;
@@ -27,6 +28,7 @@ impl Render {
                 rotation: 0.0,
             },
             camera_target: Vec2::ZERO,
+            backgrounds: Vec::new(),
         }
     }
 
@@ -34,14 +36,36 @@ impl Render {
         self.camera_target.y = model.player.position.y.as_f32() + 2.0;
         self.camera.center +=
             (self.camera_target - self.camera.center) / CAMERA_INTERPOLATION * delta_time;
+
+        let target_height = self.camera.center.y + FOV;
+        let mut current_height = FOV * self.backgrounds.len() as f32;
+        let mut rng = global_rng();
+        while current_height < target_height {
+            let index = match self.backgrounds.last() {
+                Some(last) => (0..self.assets.sprites.background.len())
+                    .filter(|i| i != last)
+                    .choose(&mut rng),
+                None => (0..self.assets.sprites.background.len()).choose(&mut rng),
+            }
+            .expect("Failed to select a random background");
+            self.backgrounds.push(index);
+            current_height += FOV;
+        }
     }
 
     pub fn draw(&mut self, model: &Model, framebuffer: &mut ugli::Framebuffer) {
+        let framebuffer_size = framebuffer.size().map(|x| x as f32);
+
         {
             // Background
-            let aabb = AABB::ZERO.extend_positive(framebuffer.size().map(|x| x as f32));
-            let quad = draw_2d::TexturedQuad::new(aabb, &self.assets.sprites.background);
-            geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &geng::PixelPerfectCamera);
+            let mut height = 0.0;
+            for &index in &self.backgrounds {
+                let aabb = AABB::point(vec2(-FOV_HORIZONTAL / 2.0, height))
+                    .extend_positive(vec2(FOV_HORIZONTAL, FOV));
+                let quad = draw_2d::TexturedQuad::new(aabb, &self.assets.sprites.background[index]);
+                geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
+                height += FOV;
+            }
 
             // Start area
             let aabb = AABB::point(vec2(0.0, -3.0))
