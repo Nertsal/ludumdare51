@@ -60,29 +60,40 @@ impl Logic<'_> {
     }
 
     fn collisions(&mut self) {
-        {
-            // Player-ground
-            let player = &mut self.model.player;
-            if player.position.y < Coord::ZERO {
-                player.position.y = Coord::ZERO;
-                player.velocity = Vec2::ZERO;
-            }
+        // Player-ground
+        let player = &mut self.model.player;
+        if player.position.y < Coord::ZERO {
+            player.position.y = Coord::ZERO;
+            player.velocity = Vec2::ZERO;
+        }
 
-            if player.alive {
-                // Player-obstacles
-                let mut kill = false;
-                for obstacle in &self.model.obstacles {
-                    let delta = obstacle.position - player.position;
-                    let penetration = obstacle.radius + player.radius - delta.len();
-                    if penetration > Coord::ZERO {
-                        // Kill the player
-                        kill = true;
-                        player.velocity += obstacle.velocity;
-                        break;
-                    }
+        if player.alive {
+            // Player-obstacles
+            let mut kill = false;
+            for obstacle in &self.model.obstacles {
+                let delta = obstacle.position - player.position;
+                let penetration = obstacle.radius + player.radius - delta.len();
+                if penetration > Coord::ZERO {
+                    // Kill the player
+                    kill = true;
+                    player.velocity += obstacle.velocity;
+                    break;
                 }
-                if kill {
-                    self.kill_player();
+            }
+            if kill {
+                self.kill_player();
+            } else {
+                // Player-balloon
+                for balloon in &mut self.model.balloons {
+                    if balloon.attached_to_player {
+                        continue;
+                    }
+                    let delta = balloon.position - player.position;
+                    let penetration = balloon.radius + player.radius - delta.len();
+                    if penetration > Coord::ZERO {
+                        player.balloons.push(balloon.id);
+                        balloon.attached_to_player = true;
+                    }
                 }
             }
         }
@@ -92,7 +103,7 @@ impl Logic<'_> {
         for id in ids {
             let mut balloon = self.model.balloons.remove(&id).unwrap();
             for other in &mut self.model.balloons {
-                collide(
+                if collide(
                     &mut balloon.position,
                     &mut balloon.velocity,
                     balloon.radius,
@@ -101,7 +112,16 @@ impl Logic<'_> {
                     &mut other.velocity,
                     other.radius,
                     other.mass,
-                );
+                ) && (balloon.attached_to_player || other.attached_to_player)
+                {
+                    if !balloon.attached_to_player {
+                        balloon.attached_to_player = true;
+                        self.model.player.balloons.push(balloon.id);
+                    } else {
+                        other.attached_to_player = true;
+                        self.model.player.balloons.push(other.id);
+                    }
+                }
             }
             self.model.balloons.insert(balloon);
         }
@@ -223,7 +243,7 @@ fn collide(
     velocity_b: &mut Vec2<Coord>,
     radius_b: Coord,
     mass_b: R32,
-) {
+) -> bool {
     let delta = *position_b - *position_a;
     let penetration = radius_a + radius_b - delta.len();
     if penetration > Coord::ZERO {
@@ -237,6 +257,9 @@ fn collide(
             collide_impulses(mass_a, *velocity_a, mass_b, *velocity_b, delta, r32(0.0));
         *velocity_a = a_vel;
         *velocity_b = b_vel;
+        true
+    } else {
+        false
     }
 }
 
