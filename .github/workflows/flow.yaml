@@ -91,35 +91,35 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: web
-      # - name: Upload itch.io (Web)
-      #   uses: josephbmanley/butler-publish-itchio-action@master
-      #   env:
-      #     BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
-      #     CHANNEL: html5
-      #     ITCH_GAME: TODO: game name
-      #     ITCH_USER: nestral
-      #     PACKAGE: web
-      # - name: Upload itch.io (Windows)
-      #   uses: josephbmanley/butler-publish-itchio-action@master
-      #   env:
-      #     BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
-      #     CHANNEL: windows
-      #     ITCH_GAME: TODO: game name
-      #     ITCH_USER: nestral
-      #     PACKAGE: windows
-      # - name: Upload itch.io (Linux)
-      #   uses: josephbmanley/butler-publish-itchio-action@master
-      #   env:
-      #     BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
-      #     CHANNEL: linux
-      #     ITCH_GAME: TODO: game name
-      #     ITCH_USER: nestral
-      #     PACKAGE: linux
-      # - name: Upload itch.io (MacOS)
-      #   uses: josephbmanley/butler-publish-itchio-action@master
-      #   env:
-      #     BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
-      #     CHANNEL: mac
-      #     ITCH_GAME: TODO: game name
-      #     ITCH_USER: nestral
-      #     PACKAGE: mac
+      - name: Upload itch.io (Web)
+        uses: josephbmanley/butler-publish-itchio-action@master
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
+          CHANNEL: html5
+          ITCH_GAME: caterpillar-on-a-balloon
+          ITCH_USER: nestral
+          PACKAGE: web
+      - name: Upload itch.io (Windows)
+        uses: josephbmanley/butler-publish-itchio-action@master
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
+          CHANNEL: windows
+          ITCH_GAME: caterpillar-on-a-balloon
+          ITCH_USER: nestral
+          PACKAGE: windows
+      - name: Upload itch.io (Linux)
+        uses: josephbmanley/butler-publish-itchio-action@master
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
+          CHANNEL: linux
+          ITCH_GAME: caterpillar-on-a-balloon
+          ITCH_USER: nestral
+          PACKAGE: linux
+      - name: Upload itch.io (MacOS)
+        uses: josephbmanley/butler-publish-itchio-action@master
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
+          CHANNEL: mac
+          ITCH_GAME: caterpillar-on-a-balloon
+          ITCH_USER: nestral
+          PACKAGE: mac
