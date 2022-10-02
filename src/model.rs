@@ -11,6 +11,7 @@ pub struct Model {
     pub config: Config,
     pub id_gen: IdGenerator,
     pub last_gen_height: Coord,
+    pub next_balloon: Time,
     pub player: Player,
     pub balloons: Collection<Balloon>,
     pub obstacles: Collection<Obstacle>,
@@ -83,6 +84,7 @@ impl Model {
         Self {
             id_gen,
             last_gen_height: config.obstacles.min_height - config.obstacles.min_dh,
+            next_balloon: Time::ZERO,
             player: Player {
                 alive: true,
                 mass: config.player_mass,

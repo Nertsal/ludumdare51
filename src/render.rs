@@ -27,7 +27,7 @@ impl Render {
     }
 
     pub fn update(&mut self, model: &Model, delta_time: f32) {
-        self.camera_target.y = model.player.position.y.as_f32() + 3.0;
+        self.camera_target.y = model.player.position.y.as_f32() + 2.0;
         self.camera.center +=
             (self.camera_target - self.camera.center) / CAMERA_INTERPOLATION * delta_time;
     }

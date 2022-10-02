@@ -36,11 +36,18 @@ impl Logic<'_> {
     fn movement(&mut self) {
         {
             let player = &mut self.model.player;
-            player.velocity -= player.velocity * player.drag * self.delta_time;
+            player.velocity *=
+                Coord::ONE - player.velocity.len_sqr() * player.drag * self.delta_time;
             player.position += player.velocity * self.delta_time;
         }
         for balloon in &mut self.model.balloons {
-            balloon.velocity -= balloon.velocity * balloon.drag * self.delta_time;
+            balloon.drag = if balloon.attached_to_player {
+                self.model.config.balloon_attached_drag
+            } else {
+                self.model.config.balloon_drag
+            };
+            balloon.velocity *=
+                Coord::ONE - balloon.velocity.len_sqr() * balloon.drag * self.delta_time;
             balloon.position += balloon.velocity * self.delta_time;
             if balloon.attached_to_player {
                 let delta = balloon.position - self.model.player.position;
@@ -179,6 +186,30 @@ impl Logic<'_> {
                 radius,
             };
             self.model.obstacles.insert(obstacle);
+        }
+
+        self.model.next_balloon -= self.delta_time;
+        if self.model.next_balloon < Time::ZERO {
+            let config = &self.model.config.balloons;
+            let y = self.model.player.position.y - config.below_player;
+            if y > config.min_height {
+                let x = r32(rng.gen_range(-1.0..=1.0)) * config.spawn_area_width;
+                let balloon = Balloon {
+                    id: self.model.id_gen.gen(),
+                    mass: self.model.config.balloon_mass,
+                    position: vec2(x, y),
+                    velocity: Vec2::ZERO,
+                    radius: r32(0.25),
+                    length: self.model.config.balloon_length,
+                    drag: self.model.config.balloon_drag,
+                    color: Rgba::RED,
+                    attached_to_player: false,
+                    popped: false,
+                };
+                self.model.balloons.insert(balloon);
+                let delay = rng.gen_range(config.min_delay..=config.max_delay);
+                self.model.next_balloon += delay;
+            }
         }
     }
 }
