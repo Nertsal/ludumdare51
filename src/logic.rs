@@ -71,6 +71,9 @@ impl Logic<'_> {
         for obstacle in &mut self.model.obstacles {
             obstacle.position += obstacle.velocity * self.delta_time;
         }
+        for cloud in &mut self.model.clouds {
+            cloud.position += cloud.velocity * self.delta_time;
+        }
     }
 
     fn collisions(&mut self) {
@@ -196,6 +199,8 @@ impl Logic<'_> {
 
     fn generation(&mut self) {
         let mut rng = global_rng();
+
+        // Obstacles
         let config = &self.model.config.obstacles;
         self.model.next_obstacle -= self.delta_time;
         if self.model.next_obstacle < Time::ZERO {
@@ -212,7 +217,7 @@ impl Logic<'_> {
                     ObstacleType::Helicopter2,
                 ]
                 .choose(&mut rng)
-                .expect("Failed to select the obstacle type");
+                .expect("Failed to select the cloud type");
                 let obstacle = Obstacle {
                     id: self.model.id_gen.gen(),
                     obstacle_type,
@@ -227,6 +232,35 @@ impl Logic<'_> {
             self.model.next_obstacle += delay;
         }
 
+        // Clouds
+        let config = &self.model.config.clouds;
+        self.model.next_obstacle -= self.delta_time;
+        if self.model.next_obstacle < Time::ZERO {
+            let height = self.model.player.position.y
+                + rng.gen_range(-config.below_player..=config.above_player);
+            if height > config.min_height {
+                let side = r32((rng.gen_range(0..=1) * 2 - 1) as f32);
+                let radius = r32(0.3);
+                let speed = rng.gen_range(config.min_speed..=config.max_speed);
+                let x = (config.spawn_area_width + radius) * side;
+                let cloud_type = *vec![CloudType::Cloud0, CloudType::Cloud1, CloudType::Cloud2]
+                    .choose(&mut rng)
+                    .expect("Failed to select the obstacle type");
+                let cloud = Cloud {
+                    id: self.model.id_gen.gen(),
+                    cloud_type,
+                    position: vec2(x, height),
+                    velocity: vec2(-side * speed, Coord::ZERO),
+                    radius,
+                };
+                self.model.clouds.insert(cloud);
+            }
+
+            let delay = rng.gen_range(config.min_delay..=config.max_delay);
+            self.model.next_obstacle += delay;
+        }
+
+        // Balloons
         self.model.next_balloon -= self.delta_time;
         if self.model.next_balloon < Time::ZERO {
             let config = &self.model.config.balloons;

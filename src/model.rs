@@ -11,11 +11,13 @@ pub struct Model {
     pub config: Config,
     pub id_gen: IdGenerator,
     pub next_obstacle: Time,
+    pub next_cloud: Time,
     pub next_balloon: Time,
     pub next_pop: Time,
     pub player: Player,
     pub balloons: Collection<Balloon>,
     pub obstacles: Collection<Obstacle>,
+    pub clouds: Collection<Cloud>,
 }
 
 pub struct Player {
@@ -58,6 +60,22 @@ pub enum ObstacleType {
     Helicopter2,
 }
 
+#[derive(HasId)]
+pub struct Cloud {
+    pub id: Id,
+    pub cloud_type: CloudType,
+    pub position: Vec2<Coord>,
+    pub velocity: Vec2<Coord>,
+    pub radius: Coord,
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum CloudType {
+    Cloud0,
+    Cloud1,
+    Cloud2,
+}
+
 impl Model {
     pub fn new(config: Config) -> Self {
         let mut id_gen = IdGenerator::new();
@@ -85,6 +103,7 @@ impl Model {
         Self {
             id_gen,
             next_obstacle: Time::ZERO,
+            next_cloud: Time::ZERO,
             next_balloon: Time::ZERO,
             next_pop: config.balloon_pop_time,
             player: Player {
@@ -98,6 +117,7 @@ impl Model {
             },
             balloons,
             obstacles: default(),
+            clouds: default(),
             config,
         }
     }

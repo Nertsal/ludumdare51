@@ -19,6 +19,16 @@
     "min_delay": 1.0,
     "max_delay": 2.0
   },
+  "clouds": {
+    "spawn_area_width": 10.0,
+    "min_speed": 0.5,
+    "max_speed": 1.0,
+    "min_height": 10.0,
+    "below_player": -3.0,
+    "above_player": 15.0,
+    "min_delay": 2.0,
+    "max_delay": 4.0
+  },
   "balloons": {
     "spawn_area_width": 5.0,
     "min_height": 1.0,

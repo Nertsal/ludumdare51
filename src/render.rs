@@ -42,6 +42,20 @@ impl Render {
             geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
         }
 
+        // Clouds
+        for cloud in &model.clouds {
+            let aabb = AABB::point(cloud.position)
+                .extend_uniform(cloud.radius * r32(1.5))
+                .map(|x| x.as_f32());
+            let texture = match cloud.cloud_type {
+                CloudType::Cloud0 => &self.assets.sprites.clouds[0],
+                CloudType::Cloud1 => &self.assets.sprites.clouds[1],
+                CloudType::Cloud2 => &self.assets.sprites.clouds[2],
+            };
+            let quad = draw_2d::TexturedQuad::new(aabb, texture);
+            geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
+        }
+
         // Obstacles
         for obstacle in &model.obstacles {
             let mut aabb = AABB::point(obstacle.position)

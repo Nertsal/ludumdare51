@@ -21,6 +21,7 @@ pub struct Config {
     pub player_drag: R32,
     pub balloon_length: Coord,
     pub obstacles: ObstacleConfig,
+    pub clouds: ObstacleConfig,
     pub balloons: BalloonsConfig,
 }
 
@@ -54,4 +55,6 @@ pub struct Sprites {
     pub airplane: ugli::Texture,
     pub helicopter: ugli::Texture,
     pub helicopter2: ugli::Texture,
+    #[asset(path = "clouds/*.png", range = "0..3")]
+    pub clouds: Vec<ugli::Texture>,
 }
