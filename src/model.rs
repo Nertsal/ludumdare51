@@ -36,6 +36,7 @@ pub struct Balloon {
     pub drag: R32,
     pub color: Rgba<f32>,
     pub attached_to_player: bool,
+    pub popped: bool,
 }
 
 #[derive(HasId)]
@@ -65,6 +66,7 @@ impl Model {
                 drag: config.balloon_drag,
                 color: Rgba::RED,
                 attached_to_player: true,
+                popped: false,
             };
             balloons.insert(balloon);
         }

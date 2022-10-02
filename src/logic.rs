@@ -53,6 +53,16 @@ impl Logic<'_> {
     }
 
     fn collisions(&mut self) {
+        {
+            // Player-ground
+            let player = &mut self.model.player;
+            if player.position.y < Coord::ZERO {
+                player.position.y = Coord::ZERO;
+                player.velocity = Vec2::ZERO;
+            }
+        }
+
+        // Balloon-balloon
         let ids: Vec<Id> = self.model.balloons.ids().copied().collect();
         for id in ids {
             let mut balloon = self.model.balloons.remove(&id).unwrap();
@@ -70,16 +80,32 @@ impl Logic<'_> {
             }
             self.model.balloons.insert(balloon);
         }
+
+        // Balloon-obstacle
+        for obstacle in &mut self.model.obstacles {
+            for balloon in &mut self.model.balloons {
+                let delta = obstacle.position - balloon.position;
+                let penetration = obstacle.radius + balloon.radius - delta.len();
+                if penetration > Coord::ZERO {
+                    // Pop the balloon
+                    balloon.popped = true;
+                }
+            }
+        }
+        self.model.balloons.retain(|b| !b.popped);
     }
 
     fn player_balloon(&mut self) {
         let player = &mut self.model.player;
+        let mut alive_balloons = Vec::new();
         for balloon in &player.balloons {
-            let balloon = self
-                .model
-                .balloons
-                .get_mut(balloon)
-                .expect("Failed to find the balloon");
+            let balloon = match self.model.balloons.get_mut(balloon) {
+                None => continue,
+                Some(b) => {
+                    alive_balloons.push(*balloon);
+                    b
+                }
+            };
             let delta = balloon.position - player.position;
             if delta.len() < balloon.length {
                 // No tension
@@ -96,6 +122,7 @@ impl Logic<'_> {
             player.velocity = p_vel;
             balloon.velocity = b_vel;
         }
+        player.balloons = alive_balloons;
     }
 
     fn generation(&mut self) {
