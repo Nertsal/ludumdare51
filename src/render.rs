@@ -69,9 +69,16 @@ impl Render {
             let aabb = AABB::point(vec2(0.0, -3.0))
                 .extend_symmetric(vec2(FOV_HORIZONTAL, 0.0) / 2.0)
                 .extend_up(FOV);
-            let quad = draw_2d::TexturedQuad::new(aabb, &self.assets.sprites.start[2]);
+            let height = self.camera.center.y;
+            let quad = draw_2d::TexturedQuad::new(
+                aabb.translate(vec2(0.0, height / 5.0)),
+                &self.assets.sprites.start[2],
+            );
             geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
-            let quad = draw_2d::TexturedQuad::new(aabb, &self.assets.sprites.start[1]);
+            let quad = draw_2d::TexturedQuad::new(
+                aabb.translate(vec2(0.0, height / 10.0)),
+                &self.assets.sprites.start[1],
+            );
             geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
             let quad = draw_2d::TexturedQuad::new(aabb, &self.assets.sprites.start[0]);
             geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
