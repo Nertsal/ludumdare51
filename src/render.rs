@@ -11,6 +11,8 @@ pub struct Render {
 }
 
 const CAMERA_INTERPOLATION: f32 = 0.5;
+const FOV: f32 = 10.0;
+const FOV_HORIZONTAL: f32 = FOV * 16.0 / 9.0;
 
 impl Render {
     pub fn new(geng: &Geng, assets: &Rc<Assets>) -> Self {
@@ -18,7 +20,7 @@ impl Render {
             geng: geng.clone(),
             assets: assets.clone(),
             camera: Camera2d {
-                center: Vec2::ZERO,
+                center: vec2(0.0, 2.0),
                 fov: 10.0,
                 rotation: 0.0,
             },
@@ -34,11 +36,15 @@ impl Render {
 
     pub fn draw(&mut self, model: &Model, framebuffer: &mut ugli::Framebuffer) {
         {
-            // Ground
-            let aabb = AABB::ZERO
-                .extend_symmetric(vec2(100.0, 0.0))
-                .extend_down(100.0);
-            let quad = draw_2d::Quad::new(aabb, Rgba::from_rgb(0.3, 0.6, 0.0));
+            // Start area
+            let aabb = AABB::point(vec2(0.0, -3.0))
+                .extend_symmetric(vec2(FOV_HORIZONTAL, 0.0) / 2.0)
+                .extend_up(FOV);
+            let quad = draw_2d::TexturedQuad::new(aabb, &self.assets.sprites.start[2]);
+            geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
+            let quad = draw_2d::TexturedQuad::new(aabb, &self.assets.sprites.start[1]);
+            geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
+            let quad = draw_2d::TexturedQuad::new(aabb, &self.assets.sprites.start[0]);
             geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
         }
 
