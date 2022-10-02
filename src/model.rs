@@ -6,6 +6,7 @@ pub use id::*;
 
 pub type Time = R32;
 pub type Coord = R32;
+pub type Score = u64;
 
 pub struct Model {
     pub config: Config,
@@ -18,6 +19,8 @@ pub struct Model {
     pub balloons: Collection<Balloon>,
     pub obstacles: Collection<Obstacle>,
     pub clouds: Collection<Cloud>,
+    pub high_score: Score,
+    pub score: Score,
 }
 
 pub struct Player {
@@ -122,6 +125,8 @@ impl Model {
             obstacles: default(),
             clouds: default(),
             config,
+            high_score: Score::ZERO, // TODO: load from file via `batbox::preferences::load`
+            score: Score::ZERO,
         }
     }
 }

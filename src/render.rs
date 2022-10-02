@@ -14,6 +14,8 @@ const CAMERA_INTERPOLATION: f32 = 0.5;
 const FOV: f32 = 10.0;
 const FOV_HORIZONTAL: f32 = FOV * 16.0 / 9.0;
 
+const TEXT_COLOR: Rgba<f32> = Rgba::BLACK;
+
 impl Render {
     pub fn new(geng: &Geng, assets: &Rc<Assets>) -> Self {
         Self {
@@ -36,6 +38,11 @@ impl Render {
 
     pub fn draw(&mut self, model: &Model, framebuffer: &mut ugli::Framebuffer) {
         {
+            // Background
+            let aabb = AABB::ZERO.extend_positive(framebuffer.size().map(|x| x as f32));
+            let quad = draw_2d::TexturedQuad::new(aabb, &self.assets.sprites.background);
+            geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &geng::PixelPerfectCamera);
+
             // Start area
             let aabb = AABB::point(vec2(0.0, -3.0))
                 .extend_symmetric(vec2(FOV_HORIZONTAL, 0.0) / 2.0)
@@ -116,5 +123,29 @@ impl Render {
             let quad = draw_2d::TexturedQuad::new(aabb, texture);
             geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
         }
+
+        self.draw_ui(model, framebuffer);
+    }
+
+    fn draw_ui(&mut self, model: &Model, framebuffer: &mut ugli::Framebuffer) {
+        let framebuffer_size = framebuffer.size().map(|x| x as f32);
+        let screen = |anchor: Vec2<f32>, offset: Vec2<f32>| -> Vec2<f32> {
+            framebuffer_size * anchor + offset
+        };
+
+        let font = &**self.geng.default_font();
+        let text = format!("Score: {}", model.score);
+        let text = draw_2d::Text::unit(font, text, TEXT_COLOR)
+            .scale_uniform(20.0)
+            .align_bounding_box(vec2(0.0, 1.0))
+            .translate(screen(vec2(0.0, 1.0), vec2(20.0, -20.0)));
+        geng::Draw2d::draw_2d(&text, &self.geng, framebuffer, &geng::PixelPerfectCamera);
+
+        let text = format!("High Score: {}", model.high_score);
+        let text = draw_2d::Text::unit(font, text, TEXT_COLOR)
+            .scale_uniform(20.0)
+            .align_bounding_box(vec2(1.0, 1.0))
+            .translate(screen(vec2(1.0, 1.0), vec2(-20.0, -20.0)));
+        geng::Draw2d::draw_2d(&text, &self.geng, framebuffer, &geng::PixelPerfectCamera);
     }
 }

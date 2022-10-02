@@ -19,6 +19,7 @@ impl Model {
 
 impl Logic<'_> {
     pub fn process(&mut self) {
+        self.update_score();
         self.apply_gravity();
         self.player_balloon();
         self.pop();
@@ -26,6 +27,19 @@ impl Logic<'_> {
         self.movement();
         self.generation();
         self.animations();
+    }
+
+    fn update_score(&mut self) {
+        let score = self
+            .model
+            .player
+            .position
+            .y
+            .floor()
+            .max(Coord::ZERO)
+            .as_f32() as Score;
+        self.model.score = self.model.score.max(score);
+        self.model.high_score = self.model.high_score.max(self.model.score);
     }
 
     fn pop(&mut self) {
