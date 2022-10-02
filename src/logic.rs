@@ -25,6 +25,7 @@ impl Logic<'_> {
         self.collisions();
         self.movement();
         self.generation();
+        self.animations();
     }
 
     fn pop(&mut self) {
@@ -73,6 +74,20 @@ impl Logic<'_> {
         }
         for cloud in &mut self.model.clouds {
             cloud.position += cloud.velocity * self.delta_time;
+        }
+    }
+
+    fn animations(&mut self) {
+        let update = |time: &mut Time, speed: R32| {
+            *time += speed * self.delta_time;
+            if *time >= Time::ONE {
+                *time -= Time::ONE;
+            }
+        };
+
+        update(&mut self.model.player.animation_time, r32(1.0));
+        for obstacle in &mut self.model.obstacles {
+            update(&mut obstacle.animation_time, r32(5.0));
         }
     }
 
@@ -220,6 +235,7 @@ impl Logic<'_> {
                 .expect("Failed to select the cloud type");
                 let obstacle = Obstacle {
                     id: self.model.id_gen.gen(),
+                    animation_time: Time::ZERO,
                     obstacle_type,
                     position: vec2(x, height),
                     velocity: vec2(-side * speed, Coord::ZERO),

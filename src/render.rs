@@ -67,7 +67,10 @@ impl Render {
                 ObstacleType::Helicopter1 => &self.assets.sprites.helicopter,
                 ObstacleType::Helicopter2 => {
                     mirror = !mirror;
-                    &self.assets.sprites.helicopter2
+                    self.assets
+                        .sprites
+                        .helicopter2
+                        .get_frame(obstacle.animation_time)
                 }
             };
             if mirror {
@@ -103,7 +106,8 @@ impl Render {
             let aabb = AABB::point(player.position)
                 .extend_uniform(player.radius)
                 .map(|x| x.as_f32());
-            let quad = draw_2d::TexturedQuad::new(aabb, &self.assets.sprites.player);
+            let texture = self.assets.sprites.player.get_frame(player.animation_time);
+            let quad = draw_2d::TexturedQuad::new(aabb, texture);
             geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
         }
     }

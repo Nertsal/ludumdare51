@@ -7,6 +7,12 @@ pub struct Assets {
     pub config: Config,
 }
 
+#[derive(Deref)]
+pub struct Animation {
+    #[deref]
+    pub frames: Vec<ugli::Texture>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, geng::Assets)]
 #[asset(json)]
 pub struct Config {
@@ -50,11 +56,42 @@ pub struct ObstacleConfig {
 
 #[derive(geng::Assets)]
 pub struct Sprites {
-    pub player: ugli::Texture,
+    pub player: Animation,
     pub balloon: ugli::Texture,
     pub airplane: ugli::Texture,
     pub helicopter: ugli::Texture,
-    pub helicopter2: ugli::Texture,
+    pub helicopter2: Animation,
     #[asset(path = "clouds/*.png", range = "0..3")]
     pub clouds: Vec<ugli::Texture>,
+}
+
+impl Animation {
+    pub fn get_frame(&self, time: Time) -> &ugli::Texture {
+        let i = (time.as_f32() * self.frames.len() as f32).floor() as usize;
+        &self.frames[i]
+    }
+}
+
+impl geng::LoadAsset for Animation {
+    fn load(geng: &Geng, path: &std::path::Path) -> geng::AssetFuture<Self> {
+        let data = <Vec<u8> as geng::LoadAsset>::load(geng, path);
+        let geng = geng.clone();
+        async move {
+            let data = data.await?;
+            use image::AnimationDecoder;
+            Ok(Self {
+                frames: image::codecs::png::PngDecoder::new(data.as_slice())
+                    .unwrap()
+                    .apng()
+                    .into_frames()
+                    .map(|frame| {
+                        let frame = frame.unwrap();
+                        ugli::Texture::from_image_image(geng.ugli(), frame.into_buffer())
+                    })
+                    .collect(),
+            })
+        }
+        .boxed_local()
+    }
+    const DEFAULT_EXT: Option<&'static str> = Some("png");
 }

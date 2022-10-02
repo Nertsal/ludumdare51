@@ -21,6 +21,7 @@ pub struct Model {
 }
 
 pub struct Player {
+    pub animation_time: Time,
     pub alive: bool,
     pub mass: R32,
     pub position: Vec2<Coord>,
@@ -47,6 +48,7 @@ pub struct Balloon {
 #[derive(HasId)]
 pub struct Obstacle {
     pub id: Id,
+    pub animation_time: Time,
     pub obstacle_type: ObstacleType,
     pub position: Vec2<Coord>,
     pub velocity: Vec2<Coord>,
@@ -107,6 +109,7 @@ impl Model {
             next_balloon: Time::ZERO,
             next_pop: config.balloon_pop_time,
             player: Player {
+                animation_time: Time::ZERO,
                 alive: true,
                 mass: config.player_mass,
                 position: Vec2::ZERO,
