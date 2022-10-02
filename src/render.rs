@@ -157,7 +157,7 @@ impl Render {
             let mut transform = Mat3::translate(player.position.map(|x| x.as_f32()));
             let texture = if player.alive && player.position.y > Coord::ZERO {
                 if player.balloons.is_empty() {
-                    transform = transform * Mat3::rotate(f32::PI / 4.0);
+                    transform = transform * Mat3::rotate(-f32::PI / 4.0);
                     &self.assets.sprites.player[0]
                 } else {
                     self.assets.sprites.player.get_frame(player.animation_time)
