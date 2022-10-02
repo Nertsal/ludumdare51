@@ -132,20 +132,56 @@ impl Render {
         let screen = |anchor: Vec2<f32>, offset: Vec2<f32>| -> Vec2<f32> {
             framebuffer_size * anchor + offset
         };
-
         let font = &**self.geng.default_font();
-        let text = format!("Score: {}", model.score);
-        let text = draw_2d::Text::unit(font, text, TEXT_COLOR)
-            .scale_uniform(20.0)
-            .align_bounding_box(vec2(0.0, 1.0))
-            .translate(screen(vec2(0.0, 1.0), vec2(20.0, -20.0)));
-        geng::Draw2d::draw_2d(&text, &self.geng, framebuffer, &geng::PixelPerfectCamera);
 
-        let text = format!("High Score: {}", model.high_score);
-        let text = draw_2d::Text::unit(font, text, TEXT_COLOR)
-            .scale_uniform(20.0)
-            .align_bounding_box(vec2(1.0, 1.0))
-            .translate(screen(vec2(1.0, 1.0), vec2(-20.0, -20.0)));
-        geng::Draw2d::draw_2d(&text, &self.geng, framebuffer, &geng::PixelPerfectCamera);
+        if model.player.alive && !model.player.balloons.is_empty() {
+            // Score
+            let text = format!("Score: {}", model.score);
+            let text = draw_2d::Text::unit(font, text, TEXT_COLOR)
+                .scale_uniform(20.0)
+                .align_bounding_box(vec2(0.0, 1.0))
+                .translate(screen(vec2(0.0, 1.0), vec2(20.0, -20.0)));
+            geng::Draw2d::draw_2d(&text, &self.geng, framebuffer, &geng::PixelPerfectCamera);
+
+            // High score
+            let text = format!("High Score: {}", model.high_score);
+            let text = draw_2d::Text::unit(font, text, TEXT_COLOR)
+                .scale_uniform(20.0)
+                .align_bounding_box(vec2(1.0, 1.0))
+                .translate(screen(vec2(1.0, 1.0), vec2(-20.0, -20.0)));
+            geng::Draw2d::draw_2d(&text, &self.geng, framebuffer, &geng::PixelPerfectCamera);
+        } else {
+            if !model.player.alive {
+                // Death message
+                let text = "You got hit :(";
+                let text = draw_2d::Text::unit(font, text, TEXT_COLOR)
+                    .scale_uniform(40.0)
+                    .align_bounding_box(vec2(0.5, 0.5))
+                    .translate(screen(vec2(0.5, 0.5), vec2(0.0, 250.0)));
+                geng::Draw2d::draw_2d(&text, &self.geng, framebuffer, &geng::PixelPerfectCamera);
+            }
+
+            // Score
+            let text = format!("You scored: {}", model.score);
+            let text = draw_2d::Text::unit(font, text, TEXT_COLOR)
+                .scale_uniform(40.0)
+                .align_bounding_box(vec2(0.5, 0.5))
+                .translate(screen(vec2(0.5, 0.5), vec2(0.0, 75.0)));
+            geng::Draw2d::draw_2d(&text, &self.geng, framebuffer, &geng::PixelPerfectCamera);
+            let text = format!("High score: {}", model.high_score);
+            let text = draw_2d::Text::unit(font, text, TEXT_COLOR)
+                .scale_uniform(40.0)
+                .align_bounding_box(vec2(0.5, 0.5))
+                .translate(screen(vec2(0.5, 0.5), vec2(0.0, -75.0)));
+            geng::Draw2d::draw_2d(&text, &self.geng, framebuffer, &geng::PixelPerfectCamera);
+
+            // Reset prompt
+            let text = "Press R to Restart";
+            let text = draw_2d::Text::unit(font, text, TEXT_COLOR)
+                .scale_uniform(40.0)
+                .align_bounding_box(vec2(0.5, 0.5))
+                .translate(screen(vec2(0.5, 0.5), vec2(0.0, -250.0)));
+            geng::Draw2d::draw_2d(&text, &self.geng, framebuffer, &geng::PixelPerfectCamera);
+        }
     }
 }
