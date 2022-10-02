@@ -5,6 +5,7 @@ use crate::model::*;
 pub struct Assets {
     pub sprites: Sprites,
     pub config: Config,
+    pub sounds: Sounds,
 }
 
 #[derive(Deref)]
@@ -67,6 +68,11 @@ pub struct Sprites {
     pub start: Vec<ugli::Texture>,
     #[asset(path = "background/*.png", range = "0..3")]
     pub background: Vec<ugli::Texture>,
+}
+
+#[derive(geng::Assets)]
+pub struct Sounds {
+    pub nya: geng::Sound,
 }
 
 impl Animation {

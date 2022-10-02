@@ -138,6 +138,7 @@ impl Logic<'_> {
                     if penetration > Coord::ZERO {
                         player.balloons.push(balloon.id);
                         balloon.attached_to_player = true;
+                        // self.model.assets.sounds.nya.play();
                     }
                 }
             }
@@ -148,7 +149,7 @@ impl Logic<'_> {
         for id in ids {
             let mut balloon = self.model.balloons.remove(&id).unwrap();
             for other in &mut self.model.balloons {
-                if collide(
+                let collision = collide(
                     &mut balloon.position,
                     &mut balloon.velocity,
                     balloon.radius,
@@ -157,8 +158,8 @@ impl Logic<'_> {
                     &mut other.velocity,
                     other.radius,
                     other.mass,
-                ) && (balloon.attached_to_player || other.attached_to_player)
-                {
+                );
+                if collision && (balloon.attached_to_player ^ other.attached_to_player) {
                     if !balloon.attached_to_player {
                         balloon.attached_to_player = true;
                         self.model.player.balloons.push(balloon.id);
@@ -166,6 +167,7 @@ impl Logic<'_> {
                         other.attached_to_player = true;
                         self.model.player.balloons.push(other.id);
                     }
+                    self.model.assets.sounds.nya.play();
                 }
             }
             self.model.balloons.insert(balloon);

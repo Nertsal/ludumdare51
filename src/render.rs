@@ -54,8 +54,6 @@ impl Render {
     }
 
     pub fn draw(&mut self, model: &Model, framebuffer: &mut ugli::Framebuffer) {
-        let framebuffer_size = framebuffer.size().map(|x| x as f32);
-
         {
             // Background
             let mut height = 0.0;

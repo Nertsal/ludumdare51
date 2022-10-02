@@ -12,6 +12,7 @@ const HIGH_SCORE_SAVE_FILE: &str = "caterpillar_save";
 
 pub struct Model {
     pub config: Config,
+    pub assets: Rc<Assets>,
     pub id_gen: IdGenerator,
     pub next_obstacle: Time,
     pub next_cloud: Time,
@@ -85,7 +86,7 @@ pub enum CloudType {
 }
 
 impl Model {
-    pub fn new(config: Config) -> Self {
+    pub fn new(config: Config, assets: &Rc<Assets>) -> Self {
         let mut id_gen = IdGenerator::new();
         let mut rng = global_rng();
 
@@ -110,6 +111,7 @@ impl Model {
 
         Self {
             id_gen,
+            assets: assets.clone(),
             next_obstacle: Time::ZERO,
             next_cloud: Time::ZERO,
             next_balloon: Time::ZERO,
@@ -136,6 +138,6 @@ impl Model {
     pub fn reset(&mut self) {
         self.high_score = self.high_score.max(self.score);
         batbox::preferences::save(HIGH_SCORE_SAVE_FILE, &self.high_score);
-        *self = Model::new(self.config.clone());
+        *self = Model::new(self.config.clone(), &self.assets);
     }
 }
