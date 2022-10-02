@@ -8,6 +8,8 @@ pub type Time = R32;
 pub type Coord = R32;
 pub type Score = u64;
 
+const HIGH_SCORE_SAVE_FILE: &str = "caterpillar_save";
+
 pub struct Model {
     pub config: Config,
     pub id_gen: IdGenerator,
@@ -125,8 +127,14 @@ impl Model {
             obstacles: default(),
             clouds: default(),
             config,
-            high_score: Score::ZERO, // TODO: load from file via `batbox::preferences::load`
+            high_score: batbox::preferences::load(HIGH_SCORE_SAVE_FILE).unwrap_or(Score::ZERO),
             score: Score::ZERO,
         }
+    }
+
+    pub fn reset(&mut self) {
+        self.high_score = self.high_score.max(self.score);
+        batbox::preferences::save(HIGH_SCORE_SAVE_FILE, &self.high_score);
+        *self = Model::new(self.config.clone());
     }
 }

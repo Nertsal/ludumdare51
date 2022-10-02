@@ -39,7 +39,6 @@ impl Logic<'_> {
             .max(Coord::ZERO)
             .as_f32() as Score;
         self.model.score = self.model.score.max(score);
-        self.model.high_score = self.model.high_score.max(self.model.score);
     }
 
     fn pop(&mut self) {

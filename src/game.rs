@@ -5,6 +5,7 @@ use render::Render;
 
 pub struct Game {
     geng: Geng,
+    assets: Rc<Assets>,
     render: Render,
     model: Model,
 }
@@ -13,21 +14,28 @@ impl Game {
     pub fn new(geng: &Geng, assets: &Rc<Assets>) -> Self {
         Self {
             geng: geng.clone(),
+            assets: assets.clone(),
             render: Render::new(geng, assets),
             model: Model::new(assets.config.clone()),
         }
     }
 
     fn control(&mut self, delta_time: Time) {
-        if !self.model.player.alive {
-            return;
-        }
         let geng = &self.geng;
         fn is_pressed(geng: &Geng, keys: impl IntoIterator<Item = geng::Key>) -> bool {
             let window = geng.window();
             keys.into_iter().any(|key| window.is_key_pressed(key))
         }
         use geng::Key;
+
+        if is_pressed(geng, [Key::R]) {
+            self.reset();
+            return;
+        }
+
+        if !self.model.player.alive {
+            return;
+        }
         let mut direction: Vec2<i32> = Vec2::ZERO;
         if is_pressed(geng, [Key::A, Key::Left]) {
             direction.x -= 1;
@@ -43,6 +51,11 @@ impl Game {
         }
         self.model.player.velocity +=
             direction.map(|x| r32(x as f32)) * self.model.config.player_acceleration * delta_time;
+    }
+
+    fn reset(&mut self) {
+        self.model.reset();
+        self.render = Render::new(&self.geng, &self.assets);
     }
 }
 
