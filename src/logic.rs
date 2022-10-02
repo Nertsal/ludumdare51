@@ -21,9 +21,23 @@ impl Logic<'_> {
     pub fn process(&mut self) {
         self.apply_gravity();
         self.player_balloon();
+        self.pop();
         self.collisions();
         self.movement();
         self.generation();
+    }
+
+    fn pop(&mut self) {
+        self.model.next_pop -= self.delta_time;
+        if self.model.next_pop < Time::ZERO {
+            // Pop a balloon
+            let mut rng = global_rng();
+            if let Some(i) = (0..self.model.player.balloons.len()).choose(&mut rng) {
+                let balloon = self.model.player.balloons.remove(i);
+                self.model.balloons.remove(&balloon);
+            }
+            self.model.next_pop = self.model.config.balloon_pop_time;
+        }
     }
 
     fn apply_gravity(&mut self) {

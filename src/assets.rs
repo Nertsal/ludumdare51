@@ -11,6 +11,7 @@ pub struct Assets {
 #[asset(json)]
 pub struct Config {
     pub gravity: Vec2<Coord>,
+    pub balloon_pop_time: Time,
     pub player_acceleration: Coord,
     pub initial_balloons: usize,
     pub balloon_mass: R32,
