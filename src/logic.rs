@@ -138,7 +138,7 @@ impl Logic<'_> {
                     if penetration > Coord::ZERO {
                         player.balloons.push(balloon.id);
                         balloon.attached_to_player = true;
-                        // self.model.assets.sounds.nya.play();
+                        self.model.assets.sounds.nya.play();
                     }
                 }
             }
