@@ -58,6 +58,7 @@ pub struct ObstacleConfig {
 #[derive(geng::Assets)]
 pub struct Sprites {
     pub player: Animation,
+    pub player_dead: Animation,
     pub balloon: ugli::Texture,
     pub airplane: Animation,
     pub helicopter: Animation,
