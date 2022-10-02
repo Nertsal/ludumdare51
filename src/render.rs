@@ -155,8 +155,8 @@ impl Render {
             let player = &model.player;
             let aabb = AABB::ZERO.extend_uniform(player.radius).map(|x| x.as_f32());
             let mut transform = Mat3::translate(player.position.map(|x| x.as_f32()));
-            let texture = if player.alive && player.position.y > Coord::ZERO {
-                if player.balloons.is_empty() {
+            let texture = if player.position.y > Coord::ZERO {
+                if player.balloons.is_empty() || !player.alive {
                     transform = transform * Mat3::rotate(-f32::PI / 4.0);
                     &self.assets.sprites.player[0]
                 } else {
