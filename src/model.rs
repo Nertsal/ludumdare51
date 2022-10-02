@@ -17,6 +17,7 @@ pub struct Model {
 }
 
 pub struct Player {
+    pub alive: bool,
     pub mass: R32,
     pub position: Vec2<Coord>,
     pub velocity: Vec2<Coord>,
@@ -83,6 +84,7 @@ impl Model {
             id_gen,
             last_gen_height: config.obstacles.min_height - config.obstacles.min_dh,
             player: Player {
+                alive: true,
                 mass: config.player_mass,
                 position: Vec2::ZERO,
                 velocity: Vec2::ZERO,

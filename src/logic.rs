@@ -60,6 +60,24 @@ impl Logic<'_> {
                 player.position.y = Coord::ZERO;
                 player.velocity = Vec2::ZERO;
             }
+
+            if player.alive {
+                // Player-obstacles
+                let mut kill = false;
+                for obstacle in &self.model.obstacles {
+                    let delta = obstacle.position - player.position;
+                    let penetration = obstacle.radius + player.radius - delta.len();
+                    if penetration > Coord::ZERO {
+                        // Kill the player
+                        kill = true;
+                        player.velocity += obstacle.velocity;
+                        break;
+                    }
+                }
+                if kill {
+                    self.kill_player();
+                }
+            }
         }
 
         // Balloon-balloon
@@ -82,7 +100,7 @@ impl Logic<'_> {
         }
 
         // Balloon-obstacle
-        for obstacle in &mut self.model.obstacles {
+        for obstacle in &self.model.obstacles {
             for balloon in &mut self.model.balloons {
                 let delta = obstacle.position - balloon.position;
                 let penetration = obstacle.radius + balloon.radius - delta.len();
@@ -93,6 +111,16 @@ impl Logic<'_> {
             }
         }
         self.model.balloons.retain(|b| !b.popped);
+    }
+
+    fn kill_player(&mut self) {
+        let player = &mut self.model.player;
+        player.alive = false;
+        for balloon in player.balloons.drain(..) {
+            if let Some(balloon) = self.model.balloons.get_mut(&balloon) {
+                balloon.attached_to_player = false;
+            }
+        }
     }
 
     fn player_balloon(&mut self) {

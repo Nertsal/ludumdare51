@@ -19,6 +19,9 @@ impl Game {
     }
 
     fn control(&mut self, delta_time: Time) {
+        if !self.model.player.alive {
+            return;
+        }
         let geng = &self.geng;
         fn is_pressed(geng: &Geng, keys: impl IntoIterator<Item = geng::Key>) -> bool {
             let window = geng.window();

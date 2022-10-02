@@ -69,12 +69,14 @@ impl Render {
                 .extend_uniform(balloon.radius * r32(1.5))
                 .map(|x| x.as_f32());
 
-            let segment = Segment::new(
-                vec2(aabb.center().x, aabb.y_min + balloon.radius.as_f32() * 0.1),
-                model.player.position.map(|x| x.as_f32()),
-            );
-            let segment = draw_2d::Segment::new(segment, 0.02, Rgba::BLACK);
-            geng::Draw2d::draw_2d(&segment, &self.geng, framebuffer, &self.camera);
+            if balloon.attached_to_player {
+                let segment = Segment::new(
+                    vec2(aabb.center().x, aabb.y_min + balloon.radius.as_f32() * 0.1),
+                    model.player.position.map(|x| x.as_f32()),
+                );
+                let segment = draw_2d::Segment::new(segment, 0.02, Rgba::BLACK);
+                geng::Draw2d::draw_2d(&segment, &self.geng, framebuffer, &self.camera);
+            }
 
             let quad =
                 draw_2d::TexturedQuad::colored(aabb, &self.assets.sprites.balloon, balloon.color);
