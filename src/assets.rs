@@ -37,4 +37,7 @@ pub struct ObstacleConfig {
 pub struct Sprites {
     pub player: ugli::Texture,
     pub balloon: ugli::Texture,
+    pub airplane: ugli::Texture,
+    pub helicopter: ugli::Texture,
+    pub helicopter2: ugli::Texture,
 }

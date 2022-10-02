@@ -133,11 +133,19 @@ impl Logic<'_> {
             let height = self.model.last_gen_height + rng.gen_range(config.min_dh..=config.max_dh);
             self.model.last_gen_height = height;
             let side = r32((rng.gen_range(0..=1) * 2 - 1) as f32);
-            let radius = r32(0.5);
+            let radius = r32(0.3);
             let speed = rng.gen_range(config.min_speed..=config.max_speed);
             let x = (config.spawn_area_width + radius) * side;
+            let obstacle_type = *vec![
+                ObstacleType::Plane,
+                ObstacleType::Helicopter1,
+                ObstacleType::Helicopter2,
+            ]
+            .choose(&mut rng)
+            .expect("Failed to select the obstacle type");
             let obstacle = Obstacle {
                 id: self.model.id_gen.gen(),
+                obstacle_type,
                 position: vec2(x, height),
                 velocity: vec2(-side * speed, Coord::ZERO),
                 radius,

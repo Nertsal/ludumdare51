@@ -42,9 +42,17 @@ pub struct Balloon {
 #[derive(HasId)]
 pub struct Obstacle {
     pub id: Id,
+    pub obstacle_type: ObstacleType,
     pub position: Vec2<Coord>,
     pub velocity: Vec2<Coord>,
     pub radius: Coord,
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum ObstacleType {
+    Plane,
+    Helicopter1,
+    Helicopter2,
 }
 
 impl Model {

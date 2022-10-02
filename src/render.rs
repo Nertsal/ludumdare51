@@ -44,10 +44,22 @@ impl Render {
 
         // Obstacles
         for obstacle in &model.obstacles {
-            let aabb = AABB::point(obstacle.position)
-                .extend_uniform(obstacle.radius)
+            let mut aabb = AABB::point(obstacle.position)
+                .extend_uniform(obstacle.radius * r32(1.5))
                 .map(|x| x.as_f32());
-            let quad = draw_2d::Quad::new(aabb, Rgba::GREEN);
+            let mut mirror = obstacle.velocity.x < Coord::ZERO;
+            let texture = match obstacle.obstacle_type {
+                ObstacleType::Plane => &self.assets.sprites.airplane,
+                ObstacleType::Helicopter1 => &self.assets.sprites.helicopter,
+                ObstacleType::Helicopter2 => {
+                    mirror = !mirror;
+                    &self.assets.sprites.helicopter2
+                }
+            };
+            if mirror {
+                std::mem::swap(&mut aabb.x_min, &mut aabb.x_max);
+            }
+            let quad = draw_2d::TexturedQuad::new(aabb, texture);
             geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
         }
 
