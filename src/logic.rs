@@ -24,7 +24,7 @@ impl Model {
     pub fn play_sound(&self, sound: &geng::Sound, position: Vec2<Coord>) {
         let mut effect = sound.effect();
         let volume = self.sound_volume(position);
-        effect.set_volume(dbg!(volume));
+        effect.set_volume(volume);
         effect.play();
     }
 }

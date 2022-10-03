@@ -155,7 +155,7 @@ impl Render {
             let player = &model.player;
             let aabb = AABB::ZERO.extend_uniform(player.radius).map(|x| x.as_f32());
             let mut transform = Mat3::translate(player.position.map(|x| x.as_f32()));
-            let texture = if player.balloons.is_empty() && player.position.y <= Coord::ZERO {
+            let texture = if player.balloons.is_empty() && player.position.y <= r32(0.1) {
                 self.assets
                     .sprites
                     .player_dead
