@@ -34,6 +34,7 @@ impl Game {
         }
 
         if !self.model.player.alive {
+            self.model.player_control_velocity = Vec2::ZERO;
             return;
         }
         let mut direction: Vec2<i32> = Vec2::ZERO;

@@ -49,7 +49,7 @@ impl Logic<'_> {
             .as_f32()
             .clamp(0.0, 1.0) as f64
             * self.model.volume;
-        self.model.wind_sound.set_volume(dbg!(volume));
+        self.model.wind_sound.set_volume(volume);
 
         // Helicopter
         let volume = self
