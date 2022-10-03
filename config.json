@@ -1,11 +1,14 @@
 {
   "gravity": [0.0, -10.0],
+  "arena_width": 8.8,
   "balloon_pop_time": 10.0,
-  "player_acceleration": [10.0, 3.0],
+  "player_speed_h": 3.0,
+  "player_speed_v_down": 1.0,
+  "player_speed_v_up": 1.0,
   "initial_balloons": 5,
-  "balloon_mass": 0.25,
+  "balloon_mass": 0.5,
   "player_mass": 1.0,
-  "balloon_drag": 0.5,
+  "balloon_drag": 0.3,
   "balloon_attached_drag": 0.1,
   "player_drag": 0.1,
   "balloon_length": 2.0,
@@ -16,6 +19,7 @@
     "min_height": 5.0,
     "below_player": 0.0,
     "above_player": 7.0,
+    "ahead_of_player": 1.0,
     "min_delay": 1.0,
     "max_delay": 2.0
   },
@@ -26,13 +30,14 @@
     "min_height": 10.0,
     "below_player": -3.0,
     "above_player": 15.0,
+    "ahead_of_player": 1.0,
     "min_delay": 2.0,
     "max_delay": 4.0
   },
   "balloons": {
     "spawn_area_width": 5.0,
     "min_height": 1.0,
-    "below_player": 4.0,
+    "below_player": 4.5,
     "min_delay": 4.0,
     "max_delay": 6.0
   }
