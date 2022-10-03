@@ -28,11 +28,6 @@ impl Game {
         }
         use geng::Key;
 
-        if is_pressed(geng, [Key::R]) {
-            self.reset();
-            return;
-        }
-
         if !self.model.player.alive {
             self.model.player_control_velocity = Vec2::ZERO;
             return;
