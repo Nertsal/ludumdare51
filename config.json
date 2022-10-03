@@ -12,6 +12,13 @@
   "balloon_attached_drag": 0.1,
   "player_drag": 0.1,
   "balloon_length": 2.0,
+  "balloon_colors": [
+    "#EE6352",
+    "#08B2E3",
+    "#624CAB",
+    "#BCE784",
+    "#5DD39E"
+  ],
   "obstacles": {
     "spawn_area_width": 10.0,
     "min_speed": 2.0,
