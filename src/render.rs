@@ -94,7 +94,7 @@ impl Render {
                 CloudType::Cloud1 => &self.assets.sprites.clouds[1],
                 CloudType::Cloud2 => &self.assets.sprites.clouds[2],
             };
-            let quad = draw_2d::TexturedQuad::new(aabb, texture);
+            let quad = draw_2d::TexturedQuad::colored(aabb, texture, Rgba::from_rgb(0.7, 0.7, 0.7));
             geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
         }
 
