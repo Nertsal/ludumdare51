@@ -108,6 +108,7 @@ impl Logic<'_> {
                 Coord::ONE - player.velocity.len_sqr() * player.drag * self.delta_time;
             player.position +=
                 (player.velocity + self.model.player_control_velocity) * self.delta_time;
+            player.position.x = player.position.x.clamp_abs(self.model.config.arena_width);
         }
         for balloon in &mut self.model.balloons {
             balloon.drag = if balloon.attached_to_player {

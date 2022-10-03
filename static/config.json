@@ -1,5 +1,6 @@
 {
   "gravity": [0.0, -10.0],
+  "arena_width": 8.8,
   "balloon_pop_time": 10.0,
   "player_speed_h": 3.0,
   "player_speed_v_down": 1.0,

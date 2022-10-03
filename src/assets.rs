@@ -18,6 +18,7 @@ pub struct Animation {
 #[asset(json)]
 pub struct Config {
     pub gravity: Vec2<Coord>,
+    pub arena_width: Coord,
     pub balloon_pop_time: Time,
     pub player_speed_h: Coord,
     pub player_speed_v_down: Coord,
