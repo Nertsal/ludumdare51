@@ -97,7 +97,7 @@ impl Model {
 
         let mut balloons = Collection::new();
         for _ in 0..config.initial_balloons {
-            let x = rng.gen_range(-1.0..=1.0);
+            let x = rng.gen_range(-0.1..=0.1);
             let y = rng.gen_range(-0.1..=0.1);
             let color = *config
                 .balloon_colors
@@ -106,7 +106,7 @@ impl Model {
             let balloon = Balloon {
                 id: id_gen.gen(),
                 mass: config.balloon_mass,
-                position: vec2(0.0 + x, 2.0 + y).map(r32),
+                position: vec2(0.0 + x, 0.0 + y).map(r32),
                 velocity: Vec2::ZERO,
                 radius: r32(0.25),
                 length: config.balloon_length,

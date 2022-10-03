@@ -174,13 +174,9 @@ impl Render {
 
         // Spawn animation
         if let Some(time) = model.spawn_animation {
-            let animation = &self.assets.sprites.spawn;
-            let i = (time.as_f32() * animation.len() as f32).floor() as usize;
-            let texture = &animation[i];
+            let texture = self.assets.sprites.spawn.get_frame(time);
             let size = model.player.radius * r32(4.0);
-            let aabb = AABB::point(vec2(Coord::ZERO, size / r32(2.0) + r32(0.1)))
-                .extend_uniform(size)
-                .map(|x| x.as_f32());
+            let aabb = AABB::ZERO.extend_uniform(size).map(|x| x.as_f32());
             let quad = draw_2d::TexturedQuad::new(aabb, texture);
             geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
         }

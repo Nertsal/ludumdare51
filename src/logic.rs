@@ -123,6 +123,10 @@ impl Logic<'_> {
             }
         }
         for balloon in &mut self.model.balloons {
+            if balloon.attached_to_player && self.model.spawn_animation.is_some() {
+                continue;
+            }
+
             balloon.drag = if balloon.attached_to_player {
                 self.model.config.balloon_attached_drag
             } else {
@@ -215,6 +219,11 @@ impl Logic<'_> {
         let ids: Vec<Id> = self.model.balloons.ids().copied().collect();
         for id in ids {
             let mut balloon = self.model.balloons.remove(&id).unwrap();
+            if balloon.attached_to_player && self.model.spawn_animation.is_some() {
+                self.model.balloons.insert(balloon);
+                continue;
+            }
+
             for other in &mut self.model.balloons {
                 let collision = collide(
                     &mut balloon.position,

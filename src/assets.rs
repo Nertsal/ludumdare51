@@ -74,8 +74,7 @@ pub struct Sprites {
     pub start: Vec<ugli::Texture>,
     #[asset(path = "background/*.png", range = "0..3")]
     pub background: Vec<ugli::Texture>,
-    #[asset(path = "spawn/*.png", range = "0..8")]
-    pub spawn: Vec<ugli::Texture>,
+    pub spawn: Animation,
 }
 
 #[derive(geng::Assets)]
