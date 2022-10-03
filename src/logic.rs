@@ -24,7 +24,7 @@ impl Model {
     pub fn play_sound(&self, sound: &geng::Sound, position: Vec2<Coord>) {
         let mut effect = sound.effect();
         let volume = self.sound_volume(position);
-        effect.set_volume(volume);
+        effect.set_volume(dbg!(volume));
         effect.play();
     }
 }
@@ -44,11 +44,12 @@ impl Logic<'_> {
 
     fn sounds(&mut self) {
         // Wind
-        let volume = (self.model.player.position.y.as_f32() as f64 / 20.0)
+        let volume = (self.model.player.position.y.max(Coord::ZERO) / r32(20.0))
             .sqrt()
-            .clamp(0.0, 1.0)
+            .as_f32()
+            .clamp(0.0, 1.0) as f64
             * self.model.volume;
-        self.model.wind_sound.set_volume(volume);
+        self.model.wind_sound.set_volume(dbg!(volume));
 
         // Helicopter
         let volume = self
