@@ -98,6 +98,10 @@ impl Model {
         for _ in 0..config.initial_balloons {
             let x = rng.gen_range(-1.0..=1.0);
             let y = rng.gen_range(-0.1..=0.1);
+            let color = *config
+                .balloon_colors
+                .choose(&mut rng)
+                .expect("Failed to select balloon color");
             let balloon = Balloon {
                 id: id_gen.gen(),
                 mass: config.balloon_mass,
@@ -106,7 +110,7 @@ impl Model {
                 radius: r32(0.25),
                 length: config.balloon_length,
                 drag: config.balloon_drag,
-                color: Rgba::RED,
+                color,
                 attached_to_player: true,
                 popped: false,
             };

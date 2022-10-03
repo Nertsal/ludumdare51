@@ -30,6 +30,7 @@ pub struct Config {
     pub balloon_attached_drag: R32,
     pub player_drag: R32,
     pub balloon_length: Coord,
+    pub balloon_colors: Vec<Rgba<f32>>,
     pub obstacles: ObstacleConfig,
     pub clouds: ObstacleConfig,
     pub balloons: BalloonsConfig,

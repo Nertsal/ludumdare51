@@ -367,6 +367,12 @@ impl Logic<'_> {
             let y = self.model.player.position.y - config.below_player;
             if y > config.min_height {
                 let x = r32(rng.gen_range(-1.0..=1.0)) * config.spawn_area_width;
+                let color = *self
+                    .model
+                    .config
+                    .balloon_colors
+                    .choose(&mut rng)
+                    .expect("Failed to select balloon color");
                 let balloon = Balloon {
                     id: self.model.id_gen.gen(),
                     mass: self.model.config.balloon_mass,
@@ -375,7 +381,7 @@ impl Logic<'_> {
                     radius: r32(0.25),
                     length: self.model.config.balloon_length,
                     drag: self.model.config.balloon_drag,
-                    color: Rgba::RED,
+                    color,
                     attached_to_player: false,
                     popped: false,
                 };
