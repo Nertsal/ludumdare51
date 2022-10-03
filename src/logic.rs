@@ -111,11 +111,16 @@ impl Logic<'_> {
     fn movement(&mut self) {
         {
             let player = &mut self.model.player;
-            player.velocity *=
-                Coord::ONE - player.velocity.len_sqr() * player.drag * self.delta_time;
-            player.position +=
-                (player.velocity + self.model.player_control_velocity) * self.delta_time;
-            player.position.x = player.position.x.clamp_abs(self.model.config.arena_width);
+            if self.model.spawn_animation.is_some() {
+                self.model.player_control_velocity = Vec2::ZERO;
+                player.velocity = Vec2::ZERO;
+            } else {
+                player.velocity *=
+                    Coord::ONE - player.velocity.len_sqr() * player.drag * self.delta_time;
+                player.position +=
+                    (player.velocity + self.model.player_control_velocity) * self.delta_time;
+                player.position.x = player.position.x.clamp_abs(self.model.config.arena_width);
+            }
         }
         for balloon in &mut self.model.balloons {
             balloon.drag = if balloon.attached_to_player {
@@ -146,6 +151,13 @@ impl Logic<'_> {
                 *time -= Time::ONE;
             }
         };
+
+        if let Some(time) = &mut self.model.spawn_animation {
+            *time += r32(1.0) * self.delta_time;
+            if *time >= Time::ONE {
+                self.model.spawn_animation = None;
+            }
+        }
 
         update(&mut self.model.player.animation_time, r32(1.0));
         for obstacle in &mut self.model.obstacles {

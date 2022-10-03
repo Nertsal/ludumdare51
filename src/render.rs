@@ -64,25 +64,23 @@ impl Render {
                 geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
                 height += FOV;
             }
-
-            // Start area
-            let aabb = AABB::point(vec2(0.0, -3.7))
-                .extend_symmetric(vec2(FOV_HORIZONTAL, 0.0) / 2.0)
-                .extend_up(FOV);
-            let height = self.camera.center.y;
-            let quad = draw_2d::TexturedQuad::new(
-                aabb.translate(vec2(0.0, height / 5.0)),
-                &self.assets.sprites.start[2],
-            );
-            geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
-            let quad = draw_2d::TexturedQuad::new(
-                aabb.translate(vec2(0.0, height / 10.0)),
-                &self.assets.sprites.start[1],
-            );
-            geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
-            let quad = draw_2d::TexturedQuad::new(aabb, &self.assets.sprites.start[0]);
-            geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
         }
+
+        // Start area
+        let start_aabb = AABB::point(vec2(0.0, -3.7))
+            .extend_symmetric(vec2(FOV_HORIZONTAL, 0.0) / 2.0)
+            .extend_up(FOV);
+        let height = self.camera.center.y;
+        let quad = draw_2d::TexturedQuad::new(
+            start_aabb.translate(vec2(0.0, height / 5.0)),
+            &self.assets.sprites.start[2],
+        );
+        geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
+        let quad = draw_2d::TexturedQuad::new(
+            start_aabb.translate(vec2(0.0, height / 10.0)),
+            &self.assets.sprites.start[1],
+        );
+        geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
 
         // Clouds
         for cloud in &model.clouds {
@@ -150,6 +148,10 @@ impl Render {
             geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
         }
 
+        // Spawn house
+        let quad = draw_2d::TexturedQuad::new(start_aabb, &self.assets.sprites.start[0]);
+        geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
+
         {
             // Player
             let player = &model.player;
@@ -167,6 +169,19 @@ impl Render {
                 self.assets.sprites.player.get_frame(player.animation_time)
             };
             let quad = draw_2d::TexturedQuad::new(aabb, texture).transform(transform);
+            geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
+        }
+
+        // Spawn animation
+        if let Some(time) = model.spawn_animation {
+            let animation = &self.assets.sprites.spawn;
+            let i = (time.as_f32() * animation.len() as f32).floor() as usize;
+            let texture = &animation[i];
+            let size = model.player.radius * r32(4.0);
+            let aabb = AABB::point(vec2(Coord::ZERO, size / r32(2.0) + r32(0.1)))
+                .extend_uniform(size)
+                .map(|x| x.as_f32());
+            let quad = draw_2d::TexturedQuad::new(aabb, texture);
             geng::Draw2d::draw_2d(&quad, &self.geng, framebuffer, &self.camera);
         }
 

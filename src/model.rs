@@ -28,6 +28,7 @@ pub struct Model {
     pub volume: f64,
     pub helicopter_sound: geng::SoundEffect,
     pub wind_sound: geng::SoundEffect,
+    pub spawn_animation: Option<Time>,
 }
 
 pub struct Player {
@@ -154,6 +155,7 @@ impl Model {
                 effect.play();
                 effect
             },
+            spawn_animation: Some(Time::ZERO),
         }
     }
 
