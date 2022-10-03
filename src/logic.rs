@@ -15,10 +15,23 @@ impl Model {
         };
         logic.process();
     }
+
+    pub fn sound_volume(&self, position: Vec2<Coord>) -> f64 {
+        let distance = (position - self.player.position).len().as_f32();
+        (1.0 - (distance / 10.0).sqr()).max(0.0) as f64 * self.volume
+    }
+
+    pub fn play_sound(&self, sound: &geng::Sound, position: Vec2<Coord>) {
+        let mut effect = sound.effect();
+        let volume = self.sound_volume(position);
+        effect.set_volume(volume);
+        effect.play();
+    }
 }
 
 impl Logic<'_> {
     pub fn process(&mut self) {
+        self.sounds();
         self.update_score();
         self.apply_gravity();
         self.player_balloon();
@@ -27,6 +40,33 @@ impl Logic<'_> {
         self.movement();
         self.generation();
         self.animations();
+    }
+
+    fn sounds(&mut self) {
+        // Wind
+        let volume = (self.model.player.position.y.as_f32() as f64 / 20.0)
+            .sqrt()
+            .clamp(0.0, 1.0)
+            * self.model.volume;
+        self.model.wind_sound.set_volume(volume);
+
+        // Helicopter
+        let volume = self
+            .model
+            .obstacles
+            .iter()
+            .filter(|obstacle| {
+                matches!(
+                    obstacle.obstacle_type,
+                    ObstacleType::Helicopter1 | ObstacleType::Helicopter2
+                )
+            })
+            .map(|helicopter| r64(self.model.sound_volume(helicopter.position)))
+            .max()
+            .unwrap_or(R64::ZERO)
+            .as_f32()
+            .into();
+        self.model.helicopter_sound.set_volume(volume);
     }
 
     fn update_score(&mut self) {
@@ -108,6 +148,9 @@ impl Logic<'_> {
         // Player-ground
         let player = &mut self.model.player;
         if player.position.y < Coord::ZERO {
+            if player.velocity.y.abs() > self.model.config.gravity.y.abs() * r32(0.2) {
+                self.model.assets.sounds.splash.play();
+            }
             player.position.y = Coord::ZERO;
             player.velocity = Vec2::ZERO;
         }
@@ -122,6 +165,7 @@ impl Logic<'_> {
                     // Kill the player
                     kill = true;
                     player.velocity += obstacle.velocity;
+                    self.model.assets.sounds.hit.play();
                     break;
                 }
             }
@@ -138,7 +182,9 @@ impl Logic<'_> {
                     if penetration > Coord::ZERO {
                         player.balloons.push(balloon.id);
                         balloon.attached_to_player = true;
-                        self.model.assets.sounds.nya.play();
+                        if let Some(nya) = self.model.assets.sounds.nya.choose(&mut global_rng()) {
+                            nya.play();
+                        }
                     }
                 }
             }
@@ -167,24 +213,34 @@ impl Logic<'_> {
                         other.attached_to_player = true;
                         self.model.player.balloons.push(other.id);
                     }
-                    self.model.assets.sounds.nya.play();
+                    if let Some(nya) = self.model.assets.sounds.nya.choose(&mut global_rng()) {
+                        nya.play();
+                    }
                 }
             }
             self.model.balloons.insert(balloon);
         }
 
         // Balloon-obstacle
+        let mut pops = Vec::new();
         for obstacle in &self.model.obstacles {
             for balloon in &mut self.model.balloons {
+                if balloon.popped {
+                    continue;
+                }
                 let delta = obstacle.position - balloon.position;
                 let penetration = obstacle.radius + balloon.radius - delta.len();
                 if penetration > Coord::ZERO {
                     // Pop the balloon
                     balloon.popped = true;
+                    pops.push(balloon.position);
                 }
             }
         }
         self.model.balloons.retain(|b| !b.popped);
+        for pop in pops {
+            self.model.play_sound(&self.model.assets.sounds.pop, pop);
+        }
     }
 
     fn kill_player(&mut self) {

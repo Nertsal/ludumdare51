@@ -24,6 +24,9 @@ pub struct Model {
     pub clouds: Collection<Cloud>,
     pub high_score: Score,
     pub score: Score,
+    pub volume: f64,
+    pub helicopter_sound: geng::SoundEffect,
+    pub wind_sound: geng::SoundEffect,
 }
 
 pub struct Player {
@@ -132,6 +135,19 @@ impl Model {
             config,
             high_score: batbox::preferences::load(HIGH_SCORE_SAVE_FILE).unwrap_or(Score::ZERO),
             score: Score::ZERO,
+            volume: 0.5,
+            helicopter_sound: {
+                let mut effect = assets.sounds.helicopter.effect();
+                effect.set_volume(0.0);
+                effect.play();
+                effect
+            },
+            wind_sound: {
+                let mut effect = assets.sounds.wind.effect();
+                effect.set_volume(0.0);
+                effect.play();
+                effect
+            },
         }
     }
 

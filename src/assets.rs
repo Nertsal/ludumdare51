@@ -73,7 +73,20 @@ pub struct Sprites {
 
 #[derive(geng::Assets)]
 pub struct Sounds {
-    pub nya: geng::Sound,
+    #[asset(path = "nya/*.wav", range = "0..2")]
+    pub nya: Vec<geng::Sound>,
+    pub hit: geng::Sound,
+    pub splash: geng::Sound,
+    pub pop: geng::Sound,
+    pub helicopter: geng::Sound,
+    pub wind: geng::Sound,
+}
+
+impl Assets {
+    pub fn process(&mut self) {
+        self.sounds.helicopter.looped = true;
+        self.sounds.wind.looped = true;
+    }
 }
 
 impl Animation {

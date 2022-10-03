@@ -23,7 +23,8 @@ fn main() {
         geng::LoadingScreen::new(&geng, geng::EmptyLoadingScreen, assets, {
             let geng = geng.clone();
             move |assets| {
-                let assets = assets.expect("Failed to load assets");
+                let mut assets = assets.expect("Failed to load assets");
+                assets.process();
                 let assets = Rc::new(assets);
                 game::Game::new(&geng, &assets)
             }
