@@ -106,7 +106,8 @@ impl Logic<'_> {
             let player = &mut self.model.player;
             player.velocity *=
                 Coord::ONE - player.velocity.len_sqr() * player.drag * self.delta_time;
-            player.position += player.velocity * self.delta_time;
+            player.position +=
+                (player.velocity + self.model.player_control_velocity) * self.delta_time;
         }
         for balloon in &mut self.model.balloons {
             balloon.drag = if balloon.attached_to_player {
@@ -290,11 +291,13 @@ impl Logic<'_> {
         let config = &self.model.config.obstacles;
         self.model.next_obstacle -= self.delta_time;
         if self.model.next_obstacle < Time::ZERO {
+            let ahead = self.model.player.velocity.y * config.ahead_of_player;
             let height = self.model.player.position.y
+                + ahead
                 + rng.gen_range(-config.below_player..=config.above_player);
             if height > config.min_height {
                 let side = r32((rng.gen_range(0..=1) * 2 - 1) as f32);
-                let radius = r32(0.3);
+                let radius = r32(0.5);
                 let speed = rng.gen_range(config.min_speed..=config.max_speed);
                 let x = (config.spawn_area_width + radius) * side;
                 let (obstacle_type, animation_speed) = *vec![
@@ -324,11 +327,13 @@ impl Logic<'_> {
         let config = &self.model.config.clouds;
         self.model.next_obstacle -= self.delta_time;
         if self.model.next_obstacle < Time::ZERO {
+            let ahead = self.model.player.velocity.y * config.ahead_of_player;
             let height = self.model.player.position.y
+                + ahead
                 + rng.gen_range(-config.below_player..=config.above_player);
             if height > config.min_height {
                 let side = r32((rng.gen_range(0..=1) * 2 - 1) as f32);
-                let radius = r32(0.3);
+                let radius = r32(0.5);
                 let speed = rng.gen_range(config.min_speed..=config.max_speed);
                 let x = (config.spawn_area_width + radius) * side;
                 let cloud_type = *vec![CloudType::Cloud0, CloudType::Cloud1, CloudType::Cloud2]

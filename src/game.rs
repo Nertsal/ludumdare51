@@ -49,8 +49,19 @@ impl Game {
         if is_pressed(geng, [Key::W, Key::Up]) {
             direction.y += 1;
         }
-        self.model.player.velocity +=
-            direction.map(|x| r32(x as f32)) * self.model.config.player_acceleration * delta_time;
+        let config = &self.model.config;
+        let speed_y = if self.model.player.balloons.is_empty() {
+            Coord::ZERO
+        } else if direction.y < 0 {
+            config.player_speed_v_down
+        } else {
+            config.player_speed_v_up
+        };
+        let speed = vec2(config.player_speed_h, speed_y);
+        let target_speed = direction.map(|x| r32(x as f32)) * speed;
+        let acc = r32(10.0);
+        self.model.player_control_velocity += (target_speed - self.model.player_control_velocity)
+            .clamp_len(Coord::ZERO..=acc * delta_time);
     }
 
     fn reset(&mut self) {

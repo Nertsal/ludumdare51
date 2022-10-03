@@ -19,7 +19,9 @@ pub struct Animation {
 pub struct Config {
     pub gravity: Vec2<Coord>,
     pub balloon_pop_time: Time,
-    pub player_acceleration: Vec2<Coord>,
+    pub player_speed_h: Coord,
+    pub player_speed_v_down: Coord,
+    pub player_speed_v_up: Coord,
     pub initial_balloons: usize,
     pub balloon_mass: R32,
     pub player_mass: R32,
@@ -51,6 +53,7 @@ pub struct ObstacleConfig {
     pub min_height: Coord,
     pub above_player: Coord,
     pub below_player: Coord,
+    pub ahead_of_player: Time,
     pub min_delay: Time,
     pub max_delay: Time,
 }

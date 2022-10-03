@@ -18,6 +18,7 @@ pub struct Model {
     pub next_cloud: Time,
     pub next_balloon: Time,
     pub next_pop: Time,
+    pub player_control_velocity: Vec2<Coord>,
     pub player: Player,
     pub balloons: Collection<Balloon>,
     pub obstacles: Collection<Obstacle>,
@@ -119,6 +120,7 @@ impl Model {
             next_cloud: Time::ZERO,
             next_balloon: Time::ZERO,
             next_pop: config.balloon_pop_time,
+            player_control_velocity: Vec2::ZERO,
             player: Player {
                 animation_time: Time::ZERO,
                 alive: true,
