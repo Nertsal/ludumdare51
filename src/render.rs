@@ -33,12 +33,12 @@ impl Render {
     }
 
     pub fn update(&mut self, model: &Model, delta_time: f32) {
-        self.camera_target.y = model.player.position.y.as_f32() + 2.0;
+        self.camera_target.y = model.player.position.y.as_f32() + 1.3;
         self.camera.center +=
             (self.camera_target - self.camera.center) / CAMERA_INTERPOLATION * delta_time;
 
         let target_height = self.camera.center.y + FOV;
-        let mut current_height = FOV * self.backgrounds.len() as f32;
+        let mut current_height = FOV * (self.backgrounds.len() as f32 - 1.0);
         let mut rng = global_rng();
         while current_height < target_height {
             let index = match self.backgrounds.last() {
@@ -56,7 +56,7 @@ impl Render {
     pub fn draw(&mut self, model: &Model, framebuffer: &mut ugli::Framebuffer) {
         {
             // Background
-            let mut height = 0.0;
+            let mut height = -FOV;
             for &index in &self.backgrounds {
                 let aabb = AABB::point(vec2(-FOV_HORIZONTAL / 2.0, height))
                     .extend_positive(vec2(FOV_HORIZONTAL, FOV));
@@ -66,7 +66,7 @@ impl Render {
             }
 
             // Start area
-            let aabb = AABB::point(vec2(0.0, -3.0))
+            let aabb = AABB::point(vec2(0.0, -3.7))
                 .extend_symmetric(vec2(FOV_HORIZONTAL, 0.0) / 2.0)
                 .extend_up(FOV);
             let height = self.camera.center.y;
