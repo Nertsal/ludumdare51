@@ -88,7 +88,13 @@ impl Logic<'_> {
             let mut rng = global_rng();
             if let Some(i) = (0..self.model.player.balloons.len()).choose(&mut rng) {
                 let balloon = self.model.player.balloons.remove(i);
-                self.model.balloons.remove(&balloon);
+                let balloon = self
+                    .model
+                    .balloons
+                    .remove(&balloon)
+                    .expect("Popped an non-existing balloon");
+                self.model
+                    .play_sound(&self.model.assets.sounds.pop, balloon.position);
             }
             self.model.next_pop = self.model.config.balloon_pop_time;
         }
