@@ -76,7 +76,11 @@ impl geng::State for Game {
         self.render.draw(&self.model, framebuffer);
     }
 
-    fn handle_event(&mut self, _event: geng::Event) {}
+    fn handle_event(&mut self, event: geng::Event) {
+        if let geng::Event::KeyDown { key: geng::Key::R } = event {
+            self.reset();
+        }
+    }
 
     fn update(&mut self, delta_time: f64) {
         let delta_time = Time::new(delta_time as _);
